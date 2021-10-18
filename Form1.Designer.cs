@@ -46,7 +46,6 @@ namespace CW1_GUI
             this.Goback.TabIndex = 0;
             this.Goback.Text = "<";
             this.Goback.UseVisualStyleBackColor = true;
-            this.Goback.Click += new System.EventHandler(this.button1_Click);
             // 
             // button1
             // 
@@ -90,7 +89,6 @@ namespace CW1_GUI
             this.Progress.Size = new System.Drawing.Size(51, 13);
             this.Progress.TabIndex = 5;
             this.Progress.Text = "Progress:";
-            this.Progress.Click += new System.EventHandler(this.Progress_Click);
             // 
             // progressBar1
             // 
