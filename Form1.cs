@@ -9,6 +9,8 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TheArtOfDev.HtmlRenderer.WinForms;
+using System.Text.RegularExpressions;
 
 namespace CW1_GUI
 {
@@ -17,44 +19,51 @@ namespace CW1_GUI
         public Form1()
         {
             InitializeComponent();
-            Browser mybrowser = Browser.Search("https://docs.microsoft.com/");
         }
 
-        
-    }
-    public class Browser
-    {
         public System.Collections.Generic.List<Uri>.Enumerator History { get; }
         public System.Collections.Generic.List<Uri>.Enumerator Favourites { get; }
 
-        public void Search(string source)
+        public String home { get; set; }
+
+        public void search(string source)
         {
-
-            // Create a request for the URL.
-            WebRequest request = WebRequest.Create(
-              "source");
-            // If required by the server, set the credentials.
-            request.Credentials = CredentialCache.DefaultCredentials;
-
-            // Get the response.
-            WebResponse response = request.GetResponse();
-            // Display the status.
-            Console.WriteLine(((HttpWebResponse)response).StatusDescription);
-
-            // Get the stream containing content returned by the server.
-            // The using block ensures the stream is automatically closed.
-            using (Stream dataStream = response.GetResponseStream())
+            try
             {
-                // Open the stream using a StreamReader for easy access.
-                StreamReader reader = new StreamReader(dataStream);
-                // Read the content.
-                string responseFromServer = reader.ReadToEnd();
-                // Display the content.
-                Console.WriteLine(responseFromServer);
+                // Creates an HttpWebRequest for the specified URL.
+                HttpWebRequest myHttpWebRequest = (HttpWebRequest)WebRequest.Create(source);
+                // Sends the HttpWebRequest and waits for a response.
+                HttpWebResponse myHttpWebResponse = (HttpWebResponse)myHttpWebRequest.GetResponse();
+                if (myHttpWebResponse.StatusCode == HttpStatusCode.OK)
+                    Console.WriteLine("\r\nResponse Status Code is OK and StatusDescription is: {0}",
+                                         myHttpWebResponse.StatusDescription);
+                // Display the contents of the page to the console.
+                Stream streamResponse = myHttpWebResponse.GetResponseStream();
+
+                // Get stream object
+                StreamReader streamRead = new StreamReader(streamResponse);
+
+                // Find title in html document
+                String page = streamRead.ReadToEnd();
+                string title = Regex.Match(page, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"].Value;
+                String text = title + " Status code: 200 (OK) \n";
+
+                // Display page
+                this.Display.Text = text + page;
+
+
+                // Release the response object resources.
+                streamRead.Close();
+                streamResponse.Close();
+
+                // Close response
+                myHttpWebResponse.Close();
+            }
+            catch (Exception e)
+            {
+                Display.Text = e.Message;
             }
 
-            // Close the response.
-            response.Close();
         }
 
         public void Goback()
@@ -66,10 +75,66 @@ namespace CW1_GUI
 
         }
 
-        public void refresh()
+
+        private void Search_Click(object sender, EventArgs f)
         {
 
+            // Assign the response object of 'HttpWebRequest' to a 'HttpWebResponse' variable.
+            try
+            {
+                // Creates an HttpWebRequest for the specified URL.
+                HttpWebRequest myHttpWebRequest = (HttpWebRequest)WebRequest.Create(this.Search_box.Text);
+                // Sends the HttpWebRequest and waits for a response.
+                HttpWebResponse myHttpWebResponse = (HttpWebResponse)myHttpWebRequest.GetResponse();
+                if (myHttpWebResponse.StatusCode == HttpStatusCode.OK)
+                    Console.WriteLine("\r\nResponse Status Code is OK and StatusDescription is: {0}",
+                                         myHttpWebResponse.StatusDescription);
+                // Display the contents of the page to the console.
+                Stream streamResponse = myHttpWebResponse.GetResponseStream();
+
+                // Get stream object
+                StreamReader streamRead = new StreamReader(streamResponse);
+
+                // Find title in html document
+                String source = streamRead.ReadToEnd();
+                string title = Regex.Match(source, @"\<title\b[^>]*\>\s*(?<Title>[\s\S]*?)\</title\>", RegexOptions.IgnoreCase).Groups["Title"].Value;
+                String text = title + " Status code: 200 (OK)";
+
+                // Display title and status code
+                Display.Text = text;
+
+                // Release the response object resources.
+                streamRead.Close();
+                streamResponse.Close();
+
+                // Close response
+                myHttpWebResponse.Close();
+            }
+            catch (Exception e)
+            {
+               Display.Text = e.Message;
+            }
+            
         }
 
+        private void Refresh_Click(object sender, EventArgs e)
+        {
+            search(this.Search_box.Text);
+                
+        }
+
+        private void Home_Click(object sender, EventArgs e)
+        {
+            if ( this.home != null)
+            {
+                search(this.home);
+            }
+            else { Display.Text = "Home is not set."; }
+        }
+
+        private void Set_home_Click(object sender, EventArgs e)
+        {
+            this.home = this.Search_box.Text;
+        }
     }
 }
