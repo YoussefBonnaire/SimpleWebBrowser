@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TheArtOfDev.HtmlRenderer.WinForms;
 using System.Text.RegularExpressions;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
+using Newtonsoft.Json;
 
 namespace CW1_GUI
 {
@@ -21,11 +24,51 @@ namespace CW1_GUI
             InitializeComponent();
         }
 
-        public System.Collections.Generic.List<Uri>.Enumerator History { get; }
-        public System.Collections.Generic.List<Uri>.Enumerator Favourites { get; }
+        public string home { get; set; }
 
-        public String home { get; set; }
+        // History variables
+        public List<String> History_list = new List<string>();
+        public List<String> current_history = new List<string>();
+        public int History_enum_ind = 0;
 
+
+        public Dictionary<String,String> Favourites_list { get; set; }
+        public static class SaveSystem
+        {
+            public static void WriteToJsonFile<T>(string filePath, T objectToWrite, bool append = false) where T : new()
+            {
+                TextWriter writer = null;
+                try
+                {
+                    var contentsToWriteToFile = JsonConvert.SerializeObject(objectToWrite);
+                    writer = new StreamWriter(filePath, append);
+                    writer.Write(contentsToWriteToFile);
+                }
+                finally
+                {
+                    if (writer != null)
+                        writer.Close();
+                }
+            }
+
+            public static T ReadFromJsonFile<T>(string filePath) where T : new()
+            {
+                TextReader reader = null;
+                try
+                {
+                    reader = new StreamReader(filePath);
+                    var fileContents = reader.ReadToEnd();
+                    return JsonConvert.DeserializeObject<T>(fileContents);
+                }
+                finally
+                {
+                    if (reader != null)
+                        reader.Close();
+                }
+            }
+
+        }
+        
         public void search(string source)
         {
             try
@@ -66,18 +109,18 @@ namespace CW1_GUI
 
         }
 
-        public void Goback()
+        private void Search_button_Click(object sender, EventArgs f)
         {
+            // Add url to history 
+            this.History_list.Add(this.Search_box.Text);
 
-        }
-        public void GoForward()
-        {
+            // set new index
+            History_enum_ind = this.History_list.Count-1 ;
 
-        }
+            // Serialiase new History list
+            SaveSystem.WriteToJsonFile<List<string>>("C:/Users/youss/source/repos/CW1_GUI/History.txt", History_list);
 
 
-        private void Search_Click(object sender, EventArgs f)
-        {
 
             // Assign the response object of 'HttpWebRequest' to a 'HttpWebResponse' variable.
             try
@@ -114,10 +157,10 @@ namespace CW1_GUI
             {
                Display.Text = e.Message;
             }
-            
+            current_history = SaveSystem.ReadFromJsonFile<List<String>>("C:/Users/youss/source/repos/CW1_GUI/History.txt");
         }
 
-        private void Refresh_Click(object sender, EventArgs e)
+        private void Refresh_Click_1(object sender, EventArgs e)
         {
             search(this.Search_box.Text);
                 
@@ -125,16 +168,53 @@ namespace CW1_GUI
 
         private void Home_Click(object sender, EventArgs e)
         {
-            if ( this.home != null)
+            List<String> current_home = SaveSystem.ReadFromJsonFile<List<String>>("C:/Users/youss/source/repos/CW1_GUI/home.txt");
+            if (current_home[0] != null)
             {
-                search(this.home);
+                search(current_home[0]);
             }
-            else { Display.Text = "Home is not set."; }
+            else { Display.Text = @"Home is not set."; }
         }
 
         private void Set_home_Click(object sender, EventArgs e)
         {
-            this.home = this.Search_box.Text;
+            home = this.Search_box.Text;
+            List<String> current_home = new List<string>();
+            current_home.Add(home);
+            SaveSystem.WriteToJsonFile<List<String>>("C:/Users/youss/source/repos/CW1_GUI/home.txt", current_home);
+        }
+        
+
+        private void Favourites_ButtonClick(object sender, EventArgs e)
+        {
+
+        }
+
+        private void History_ButtonClick(object sender, EventArgs e)
+        {
+        }
+        
+
+        private void Back_Click(object sender, EventArgs e)
+        {
+            if (History_enum_ind > 0)
+            {
+                // Move index
+                History_enum_ind--;
+                // Display previous
+                search(current_history[History_enum_ind]);
+            }
+        }
+
+        private void Forward_Click(object sender, EventArgs e)
+        {
+            if (History_enum_ind < current_history.Count - 1)
+            {
+                // Move index
+                History_enum_ind++;
+                //Display next
+                search(current_history[History_enum_ind]);
+            }
         }
     }
 }

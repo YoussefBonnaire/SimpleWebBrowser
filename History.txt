@@ -1,0 +1,1 @@
+["https://docs.microsoft.com/en-us/dotnet/api/system.configuration.applicationsettingsbase.settingchanging?redirectedfrom=MSDN&view=windowsdesktop-5.0"]

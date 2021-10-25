@@ -29,53 +29,28 @@ namespace CW1_GUI
         /// </summary>
         private void InitializeComponent()
         {
-            this.Go_forward = new System.Windows.Forms.Button();
-            this.Search_box = new System.Windows.Forms.TextBox();
-            this.Search = new System.Windows.Forms.Button();
-            this.Refresh = new System.Windows.Forms.Button();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.Progress = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.Display = new System.Windows.Forms.RichTextBox();
             this.Home = new System.Windows.Forms.Button();
             this.Set_home = new System.Windows.Forms.Button();
-            this.Go_back = new System.Windows.Forms.Button();
+            this.ToolStrip = new System.Windows.Forms.ToolStrip();
+            this.Back = new System.Windows.Forms.ToolStripButton();
+            this.Forward = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.Search_box = new System.Windows.Forms.ToolStripTextBox();
+            this.Search_button = new System.Windows.Forms.ToolStripButton();
+            this.Refresh = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.Favourites = new System.Windows.Forms.ToolStripSplitButton();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.gfdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripTextBox1 = new System.Windows.Forms.ToolStripTextBox();
+            this.History = new System.Windows.Forms.ToolStripSplitButton();
+            this.ToolStrip.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // Go_forward
-            // 
-            this.Go_forward.Location = new System.Drawing.Point(93, 16);
-            this.Go_forward.Name = "Go_forward";
-            this.Go_forward.Size = new System.Drawing.Size(75, 23);
-            this.Go_forward.TabIndex = 1;
-            this.Go_forward.Text = ">";
-            this.Go_forward.UseVisualStyleBackColor = true;
-            // 
-            // Search_box
-            // 
-            this.Search_box.Location = new System.Drawing.Point(174, 18);
-            this.Search_box.Name = "Search_box";
-            this.Search_box.Size = new System.Drawing.Size(367, 20);
-            this.Search_box.TabIndex = 2;
-            // 
-            // Search
-            // 
-            this.Search.Location = new System.Drawing.Point(547, 16);
-            this.Search.Name = "Search";
-            this.Search.Size = new System.Drawing.Size(55, 23);
-            this.Search.TabIndex = 3;
-            this.Search.Text = "Search";
-            this.Search.UseVisualStyleBackColor = true;
-            this.Search.Click += new System.EventHandler(this.Search_Click);
-            // 
-            // Refresh
-            // 
-            this.Refresh.Location = new System.Drawing.Point(608, 16);
-            this.Refresh.Name = "Refresh";
-            this.Refresh.Size = new System.Drawing.Size(72, 23);
-            this.Refresh.TabIndex = 4;
-            this.Refresh.Text = "Refresh";
-            this.Refresh.UseVisualStyleBackColor = true;
-            this.Refresh.Click += new System.EventHandler(this.Refresh_Click);
             // 
             // Progress
             // 
@@ -115,7 +90,7 @@ namespace CW1_GUI
             // 
             // Set_home
             // 
-            this.Set_home.Location = new System.Drawing.Point(726, 11);
+            this.Set_home.Location = new System.Drawing.Point(668, 31);
             this.Set_home.Name = "Set_home";
             this.Set_home.Size = new System.Drawing.Size(72, 20);
             this.Set_home.TabIndex = 9;
@@ -123,49 +98,172 @@ namespace CW1_GUI
             this.Set_home.UseVisualStyleBackColor = true;
             this.Set_home.Click += new System.EventHandler(this.Set_home_Click);
             // 
-            // Go_back
+            // ToolStrip
             // 
-            this.Go_back.Location = new System.Drawing.Point(12, 16);
-            this.Go_back.Name = "Go_back";
-            this.Go_back.Size = new System.Drawing.Size(75, 23);
-            this.Go_back.TabIndex = 10;
-            this.Go_back.Text = "<";
-            this.Go_back.UseVisualStyleBackColor = true;
+            this.ToolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.ToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Back,
+            this.Forward,
+            this.toolStripSeparator1,
+            this.Search_box,
+            this.Search_button,
+            this.Refresh,
+            this.toolStripSeparator2,
+            this.Favourites,
+            this.History});
+            this.ToolStrip.Location = new System.Drawing.Point(0, 0);
+            this.ToolStrip.Name = "ToolStrip";
+            this.ToolStrip.Size = new System.Drawing.Size(800, 25);
+            this.ToolStrip.TabIndex = 11;
+            this.ToolStrip.Text = "toolStrip1";
+            // 
+            // Back
+            // 
+            this.Back.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.Back.Image = ((System.Drawing.Image)(resources.GetObject("Back.Image")));
+            this.Back.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Back.Name = "Back";
+            this.Back.Size = new System.Drawing.Size(23, 22);
+            this.Back.Text = "<";
+            this.Back.Click += new System.EventHandler(this.Back_Click);
+            // 
+            // Forward
+            // 
+            this.Forward.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.Forward.Image = ((System.Drawing.Image)(resources.GetObject("Forward.Image")));
+            this.Forward.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Forward.Name = "Forward";
+            this.Forward.Size = new System.Drawing.Size(23, 22);
+            this.Forward.Text = ">";
+            this.Forward.Click += new System.EventHandler(this.Forward_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // Search_box
+            // 
+            this.Search_box.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.Search_box.Name = "Search_box";
+            this.Search_box.Size = new System.Drawing.Size(400, 25);
+            // 
+            // Search_button
+            // 
+            this.Search_button.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.Search_button.Image = ((System.Drawing.Image)(resources.GetObject("Search_button.Image")));
+            this.Search_button.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Search_button.Name = "Search_button";
+            this.Search_button.Size = new System.Drawing.Size(46, 22);
+            this.Search_button.Text = "Search";
+            this.Search_button.Click += new System.EventHandler(this.Search_button_Click);
+            // 
+            // Refresh
+            // 
+            this.Refresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.Refresh.Image = ((System.Drawing.Image)(resources.GetObject("Refresh.Image")));
+            this.Refresh.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Refresh.Name = "Refresh";
+            this.Refresh.Size = new System.Drawing.Size(50, 22);
+            this.Refresh.Text = "Refresh";
+            this.Refresh.Click += new System.EventHandler(this.Refresh_Click_1);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // Favourites
+            // 
+            this.Favourites.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.Favourites.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem1,
+            this.toolStripMenuItem2,
+            this.gfdToolStripMenuItem,
+            this.toolStripTextBox1});
+            this.Favourites.Image = ((System.Drawing.Image)(resources.GetObject("Favourites.Image")));
+            this.Favourites.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Favourites.Name = "Favourites";
+            this.Favourites.Size = new System.Drawing.Size(77, 22);
+            this.Favourites.Text = "Favourites";
+            this.Favourites.ButtonClick += new System.EventHandler(this.Favourites_ButtonClick);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem1.Text = "toolStripMenuItem1";
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem2.Text = "toolStripMenuItem2";
+            // 
+            // gfdToolStripMenuItem
+            // 
+            this.gfdToolStripMenuItem.Name = "gfdToolStripMenuItem";
+            this.gfdToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.gfdToolStripMenuItem.Text = "gfd";
+            this.gfdToolStripMenuItem.Click += new System.EventHandler(this.gfdToolStripMenuItem_Click);
+            // 
+            // toolStripTextBox1
+            // 
+            this.toolStripTextBox1.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.toolStripTextBox1.Name = "toolStripTextBox1";
+            this.toolStripTextBox1.Size = new System.Drawing.Size(100, 23);
+            // 
+            // History
+            // 
+            this.History.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.History.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.History.Image = ((System.Drawing.Image)(resources.GetObject("History.Image")));
+            this.History.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.History.Name = "History";
+            this.History.Size = new System.Drawing.Size(61, 22);
+            this.History.Text = "History";
+            this.History.ButtonClick += new System.EventHandler(this.History_ButtonClick);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.Go_back);
+            this.Controls.Add(this.ToolStrip);
             this.Controls.Add(this.Set_home);
             this.Controls.Add(this.Home);
             this.Controls.Add(this.Display);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.Progress);
-            this.Controls.Add(this.Refresh);
-            this.Controls.Add(this.Search);
-            this.Controls.Add(this.Search_box);
-            this.Controls.Add(this.Go_forward);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.ToolStrip.ResumeLayout(false);
+            this.ToolStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Button Go_forward;
-        private System.Windows.Forms.TextBox Search_box;
-        private System.Windows.Forms.Button Search;
-        private System.Windows.Forms.Button Refresh;
         private System.Windows.Forms.Label Progress;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.RichTextBox Display;
         private System.Windows.Forms.Button Home;
         private System.Windows.Forms.Button Set_home;
-        private System.Windows.Forms.Button Go_back;
+        private System.Windows.Forms.ToolStrip ToolStrip;
+        private System.Windows.Forms.ToolStripButton Back;
+        private System.Windows.Forms.ToolStripButton Forward;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton Search_button;
+        private System.Windows.Forms.ToolStripButton Refresh;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripSplitButton Favourites;
+        private System.Windows.Forms.ToolStripSplitButton History;
+        private System.Windows.Forms.ToolStripTextBox Search_box;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem gfdToolStripMenuItem;
+        private System.Windows.Forms.ToolStripTextBox toolStripTextBox1;
     }
 }
 
