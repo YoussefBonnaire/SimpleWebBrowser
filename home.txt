@@ -1,0 +1,1 @@
+["https://stackoverflow.com/questions/51714677/how-can-i-deserialize-a-list-of-enums-using-jackson-json"]

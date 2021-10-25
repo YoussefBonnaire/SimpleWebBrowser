@@ -45,10 +45,16 @@ namespace CW1_GUI
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.History = new System.Windows.Forms.ToolStripSplitButton();
             this.Favourites = new System.Windows.Forms.ToolStripSplitButton();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.gfdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripTextBox1 = new System.Windows.Forms.ToolStripTextBox();
+            this.Fav_Modifier = new System.Windows.Forms.ToolStripSplitButton();
+            this.label_box = new System.Windows.Forms.ToolStripTextBox();
+            this.url_box = new System.Windows.Forms.ToolStripTextBox();
+            this.addtoolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripMenuItem();
+            this.editUrlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.urlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bulk_download = new System.Windows.Forms.Button();
+            this.bulk_box = new System.Windows.Forms.TextBox();
             this.ToolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -70,19 +76,19 @@ namespace CW1_GUI
             // 
             // Display
             // 
-            this.Display.Location = new System.Drawing.Point(13, 57);
+            this.Display.Location = new System.Drawing.Point(12, 57);
             this.Display.Name = "Display";
             this.Display.ReadOnly = true;
-            this.Display.Size = new System.Drawing.Size(736, 337);
+            this.Display.Size = new System.Drawing.Size(751, 345);
             this.Display.TabIndex = 7;
             this.Display.TabStop = false;
             this.Display.Text = "";
             // 
             // Home
             // 
-            this.Home.Location = new System.Drawing.Point(746, 31);
+            this.Home.Location = new System.Drawing.Point(90, 31);
             this.Home.Name = "Home";
-            this.Home.Size = new System.Drawing.Size(53, 20);
+            this.Home.Size = new System.Drawing.Size(91, 20);
             this.Home.TabIndex = 8;
             this.Home.Text = "Home";
             this.Home.UseVisualStyleBackColor = true;
@@ -90,7 +96,7 @@ namespace CW1_GUI
             // 
             // Set_home
             // 
-            this.Set_home.Location = new System.Drawing.Point(668, 31);
+            this.Set_home.Location = new System.Drawing.Point(12, 31);
             this.Set_home.Name = "Set_home";
             this.Set_home.Size = new System.Drawing.Size(72, 20);
             this.Set_home.TabIndex = 9;
@@ -110,10 +116,11 @@ namespace CW1_GUI
             this.Refresh,
             this.toolStripSeparator2,
             this.History,
-            this.Favourites});
+            this.Favourites,
+            this.Fav_Modifier});
             this.ToolStrip.Location = new System.Drawing.Point(0, 0);
             this.ToolStrip.Name = "ToolStrip";
-            this.ToolStrip.Size = new System.Drawing.Size(800, 25);
+            this.ToolStrip.Size = new System.Drawing.Size(812, 25);
             this.ToolStrip.TabIndex = 11;
             this.ToolStrip.Text = "toolStrip1";
             // 
@@ -146,7 +153,7 @@ namespace CW1_GUI
             // 
             this.Search_box.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.Search_box.Name = "Search_box";
-            this.Search_box.Size = new System.Drawing.Size(400, 25);
+            this.Search_box.Size = new System.Drawing.Size(375, 25);
             // 
             // Search_button
             // 
@@ -187,11 +194,6 @@ namespace CW1_GUI
             // Favourites
             // 
             this.Favourites.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.Favourites.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem1,
-            this.toolStripMenuItem2,
-            this.gfdToolStripMenuItem,
-            this.toolStripTextBox1});
             this.Favourites.Image = ((System.Drawing.Image)(resources.GetObject("Favourites.Image")));
             this.Favourites.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Favourites.Name = "Favourites";
@@ -199,35 +201,98 @@ namespace CW1_GUI
             this.Favourites.Text = "Favourites";
             this.Favourites.ButtonClick += new System.EventHandler(this.Favourites_ButtonClick);
             // 
-            // toolStripMenuItem1
+            // Fav_Modifier
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
-            this.toolStripMenuItem1.Text = "toolStripMenuItem1";
+            this.Fav_Modifier.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.Fav_Modifier.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.label_box,
+            this.url_box,
+            this.addtoolStripMenuItem1,
+            this.toolStripMenuItem5,
+            this.toolStripMenuItem6,
+            this.editUrlToolStripMenuItem});
+            this.Fav_Modifier.Image = ((System.Drawing.Image)(resources.GetObject("Fav_Modifier.Image")));
+            this.Fav_Modifier.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Fav_Modifier.Name = "Fav_Modifier";
+            this.Fav_Modifier.Size = new System.Drawing.Size(89, 22);
+            this.Fav_Modifier.Text = "Fav Modifier";
             // 
-            // toolStripMenuItem2
+            // label_box
             // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
-            this.toolStripMenuItem2.Text = "toolStripMenuItem2";
+            this.label_box.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.label_box.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.label_box.Name = "label_box";
+            this.label_box.Size = new System.Drawing.Size(100, 23);
             // 
-            // gfdToolStripMenuItem
+            // url_box
             // 
-            this.gfdToolStripMenuItem.Name = "gfdToolStripMenuItem";
-            this.gfdToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.gfdToolStripMenuItem.Text = "gfd";
+            this.url_box.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.url_box.Name = "url_box";
+            this.url_box.Size = new System.Drawing.Size(100, 23);
             // 
-            // toolStripTextBox1
+            // addtoolStripMenuItem1
             // 
-            this.toolStripTextBox1.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.toolStripTextBox1.Name = "toolStripTextBox1";
-            this.toolStripTextBox1.Size = new System.Drawing.Size(100, 23);
+            this.addtoolStripMenuItem1.BackColor = System.Drawing.Color.Chartreuse;
+            this.addtoolStripMenuItem1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.addtoolStripMenuItem1.Name = "addtoolStripMenuItem1";
+            this.addtoolStripMenuItem1.Size = new System.Drawing.Size(160, 22);
+            this.addtoolStripMenuItem1.Text = "add";
+            this.addtoolStripMenuItem1.Click += new System.EventHandler(this.addtoolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem5
+            // 
+            this.toolStripMenuItem5.BackColor = System.Drawing.Color.Red;
+            this.toolStripMenuItem5.Name = "toolStripMenuItem5";
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem5.Text = "delete";
+            this.toolStripMenuItem5.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem6
+            // 
+            this.toolStripMenuItem6.BackColor = System.Drawing.Color.Orange;
+            this.toolStripMenuItem6.Name = "toolStripMenuItem6";
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(160, 22);
+            this.toolStripMenuItem6.Text = "edit name";
+            this.toolStripMenuItem6.Click += new System.EventHandler(this.editNameToolStripMenuItem_Click);
+            // 
+            // editUrlToolStripMenuItem
+            // 
+            this.editUrlToolStripMenuItem.BackColor = System.Drawing.Color.Orange;
+            this.editUrlToolStripMenuItem.Name = "editUrlToolStripMenuItem";
+            this.editUrlToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.editUrlToolStripMenuItem.Text = "edit url";
+            this.editUrlToolStripMenuItem.Click += new System.EventHandler(this.editUrlToolStripMenuItem_Click);
+            // 
+            // urlToolStripMenuItem
+            // 
+            this.urlToolStripMenuItem.Name = "urlToolStripMenuItem";
+            this.urlToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.urlToolStripMenuItem.Text = "url";
+            // 
+            // bulk_download
+            // 
+            this.bulk_download.Location = new System.Drawing.Point(665, 35);
+            this.bulk_download.Name = "bulk_download";
+            this.bulk_download.Size = new System.Drawing.Size(97, 22);
+            this.bulk_download.TabIndex = 12;
+            this.bulk_download.Text = "Bulk Download";
+            this.bulk_download.UseVisualStyleBackColor = true;
+            this.bulk_download.Click += new System.EventHandler(this.bulk_download_Click);
+            // 
+            // bulk_box
+            // 
+            this.bulk_box.Location = new System.Drawing.Point(553, 36);
+            this.bulk_box.Name = "bulk_box";
+            this.bulk_box.Size = new System.Drawing.Size(112, 20);
+            this.bulk_box.TabIndex = 13;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(812, 448);
+            this.Controls.Add(this.bulk_box);
+            this.Controls.Add(this.bulk_download);
             this.Controls.Add(this.ToolStrip);
             this.Controls.Add(this.Set_home);
             this.Controls.Add(this.Home);
@@ -259,10 +324,16 @@ namespace CW1_GUI
         private System.Windows.Forms.ToolStripSplitButton Favourites;
         private System.Windows.Forms.ToolStripSplitButton History;
         private System.Windows.Forms.ToolStripTextBox Search_box;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem gfdToolStripMenuItem;
-        private System.Windows.Forms.ToolStripTextBox toolStripTextBox1;
+        private System.Windows.Forms.ToolStripMenuItem urlToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSplitButton Fav_Modifier;
+        private System.Windows.Forms.ToolStripTextBox label_box;
+        private System.Windows.Forms.ToolStripTextBox url_box;
+        private System.Windows.Forms.ToolStripMenuItem addtoolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem5;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem6;
+        private System.Windows.Forms.ToolStripMenuItem editUrlToolStripMenuItem;
+        private System.Windows.Forms.Button bulk_download;
+        private System.Windows.Forms.TextBox bulk_box;
     }
 }
 

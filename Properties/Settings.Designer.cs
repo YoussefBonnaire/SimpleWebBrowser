@@ -25,12 +25,11 @@ namespace CW1_GUI.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string homepage {
+        [global::System.Configuration.DefaultSettingValueAttribute("bulk.txt")]
+        public string bulk {
             get {
-                return ((string)(this["homepage"]));
+                return ((string)(this["bulk"]));
             }
-            set { this["homepage"] = value; }
         }
     }
 }

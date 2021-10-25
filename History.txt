@@ -1,1 +1,1 @@
-["https://docs.microsoft.com/en-us/dotnet/api/system.configuration.applicationsettingsbase.settingchanging?redirectedfrom=MSDN&view=windowsdesktop-5.0"]
+["https://docs.microsoft.com/en-us/dotnet/desktop/winforms/controls/add-and-remove-items-from-a-wf-combobox?view=netframeworkdesktop-4.8","https://web.microsoftstream.com/video/7246a033-134f-4289-afe7-d56a6aeb2dd8","https://web.microsoftstream.com/channel/cac3cb61-e99d-4d8d-bbed-e19a6a74c9fa"]

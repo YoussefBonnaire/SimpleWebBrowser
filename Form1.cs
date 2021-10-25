@@ -1,72 +1,159 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Windows.Forms;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
+using System.Windows.Forms;
 
 namespace CW1_GUI
 {
     public partial class Form1 : Form
     {
-        public Form1()
-        {
-            InitializeComponent();
-        }
-
-        public string home { get; set; }
+        public int HistoryEnumInd;
 
         // History variables
         public List<String> HistoryList = new List<string>();
-        public List<String> CurrentHistory = new List<string>();
 
-        public int HistoryEnumInd;
+        public string Path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
-        // History tool strip
-        public ToolStripItem[] histButtons ;
-        private ToolStripTextBox newitem = new ToolStripTextBox();
+        private Dictionary<string, string> CurrentFavourites = new Dictionary<string, string>();
 
+        private List<String> _currentHistory = new List<string>();
 
-
-        public Dictionary<String, String> Favourites_list { get; set; }
-
-        public static class SaveSystem
+        public Form1()
         {
-            public static void WriteToJsonFile<T>(string filePath, T objectToWrite, bool append = false) where T : new()
+            InitializeComponent();
+
+            HistoryInitialiaser();
+            HomeInitialiser();
+        }
+
+        // Favourites variable
+        public string BulkFile { get; private set; }
+
+        public string home { get; set; }
+
+        public void bulk_download_Click(object sender, EventArgs e)
+        {
+            List<string> downloadText = new List<string>();
+            List<string> urlsList = new List<string>();
+
+            if (bulk_box.Text == "")
             {
-                TextWriter writer = null;
+                BulkFile = "bulk.txt";
+            }
+            else
+            {
+                BulkFile = bulk_box.Text;
+            }
+
+            try
+            {
+                using (StreamReader r = new StreamReader(BulkFile))
+                {
+                    string line;
+                    while ((line = r.ReadLine()) != null)
+                    {
+                        urlsList.Add(line);
+                    }
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                throw new ArgumentException("file not found", ex);
+            }
+
+            foreach (string url in urlsList)
+            {
                 try
                 {
-                    var contentsToWriteToFile = JsonConvert.SerializeObject(objectToWrite);
-                    writer = new StreamWriter(filePath, append);
-                    writer.Write(contentsToWriteToFile);
+                    // Creates an HttpWebRequest for the specified URL.
+                    HttpWebRequest myHttpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+                    // Sends the HttpWebRequest and waits for a response.
+                    HttpWebResponse myHttpWebResponse = (HttpWebResponse)myHttpWebRequest.GetResponse();
+
+                    downloadText.Add(myHttpWebResponse.StatusCode.ToString() + " " + myHttpWebResponse.ContentLength +
+                                      " " + url);
                 }
-                finally
+                catch (Exception ex)
                 {
-                    if (writer != null)
-                        writer.Close();
+                    downloadText.Add(ex.Message + " 0" + " " + url);
                 }
             }
 
-            public static T ReadFromJsonFile<T>(string filePath) where T : new()
+            Display.Text = downloadText[0];
+            foreach (string urlInfo in downloadText)
             {
-                TextReader reader = null;
-                try
+                if (urlInfo == downloadText[0])
                 {
-                    reader = new StreamReader(filePath);
-                    var fileContents = reader.ReadToEnd();
-                    return JsonConvert.DeserializeObject<T>(fileContents);
+                    Display.Text = urlInfo;
                 }
-                finally
+                else
                 {
-                    if (reader != null)
-                        reader.Close();
+                    Display.Text += Environment.NewLine + urlInfo;
                 }
             }
+        }
 
+        public ToolStripItem[] FavButtonCreator(Dictionary<string, string> urls)
+        {
+            ToolStripItem[] nItems = new ToolStripItem[urls.Count];
+            int i = 0;
+            foreach (KeyValuePair<string, string> url in urls)
+            {
+                nItems[i] = new ToolStripMenuItem();
+                nItems[i].Font = new System.Drawing.Font("Segoe UI", 9F);
+                nItems[i].Name = url.Value;
+                nItems[i].Size = new System.Drawing.Size(100, 23);
+                nItems[i].Visible = true;
+                nItems[i].Text = url.Key;
+                nItems[i].Click += DynamicButtonSearch;
+                i++;
+            }
+            return nItems;
+        }
+
+        public ToolStripItem[] HistButtonCreator(List<string> urls)
+        {
+            ToolStripItem[] nItems = new ToolStripItem[urls.Count];
+
+            for (int i = 0; i < urls.Count; i++)
+            {
+                nItems[i] = new ToolStripMenuItem();
+                nItems[i].Font = new System.Drawing.Font("Segoe UI", 9F);
+                nItems[i].Name = urls[i];
+                nItems[i].Size = new System.Drawing.Size(100, 23);
+                nItems[i].Visible = true;
+                nItems[i].Text = urls[i];
+                nItems[i].Click += DynamicButtonSearch;
+            }
+            return nItems;
+        }
+
+        public void HistoryInitialiaser()
+        {
+            _currentHistory = SaveSystem.ReadFromJsonFile<List<string>>(Path + "History.txt");
+            ToolStripItem[] newArray = HistButtonCreator(_currentHistory).ToArray();
+            History.DropDownItems.Clear();
+            History.DropDownItems.AddRange(newArray);
+            ToolStrip.ResumeLayout(false);
+            ToolStrip.PerformLayout();
+        }
+
+        public void HomeInitialiser()
+        {
+            List<String> currentHome =
+                SaveSystem.ReadFromJsonFile<List<String>>(Path + "home.txt");
+            if (currentHome[0].Length != 0)
+            {
+                search(currentHome[0]);
+            }
+            else
+            {
+                search("https://www.hw.ac.uk/");
+            }
         }
 
         public void search(string source)
@@ -74,17 +161,18 @@ namespace CW1_GUI
             try
             {
                 // Creates an HttpWebRequest for the specified URL.
-                HttpWebRequest myHttpWebRequest = (HttpWebRequest) WebRequest.Create(source);
+                HttpWebRequest myHttpWebRequest = (HttpWebRequest)WebRequest.Create(source);
                 // Sends the HttpWebRequest and waits for a response.
-                HttpWebResponse myHttpWebResponse = (HttpWebResponse) myHttpWebRequest.GetResponse();
+                HttpWebResponse myHttpWebResponse = (HttpWebResponse)myHttpWebRequest.GetResponse();
                 if (myHttpWebResponse.StatusCode == HttpStatusCode.OK)
-                    Console.WriteLine("\r\nResponse Status Code is OK and StatusDescription is: {0}",
-                        myHttpWebResponse.StatusDescription);
+                    Console.WriteLine(format: @"
+Response Status Code is OK and StatusDescription is: {0}",
+                        arg0: myHttpWebResponse.StatusDescription);
                 // Display the contents of the page to the console.
                 Stream streamResponse = myHttpWebResponse.GetResponseStream();
 
                 // Get stream object
-                StreamReader streamRead = new StreamReader(streamResponse);
+                StreamReader streamRead = new StreamReader(streamResponse ?? throw new InvalidOperationException());
 
                 // Find title in html document
                 String page = streamRead.ReadToEnd();
@@ -95,7 +183,6 @@ namespace CW1_GUI
 
                 // Display page
                 Display.Text = text + page;
-
 
                 // Release the response object resources.
                 streamRead.Close();
@@ -108,37 +195,142 @@ namespace CW1_GUI
             {
                 Display.Text = e.Message;
             }
+        }
 
+        private void addtoolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!CurrentFavourites.ContainsValue(url_box.Text))
+            {
+                CurrentFavourites.Add(label_box.Text, url_box.Text);
+            }
+        }
+
+        private void Back_Click(object sender, EventArgs e)
+        {
+            if (HistoryEnumInd > 0)
+            {
+                // Move index
+                HistoryEnumInd--;
+                // Display previous
+                search(_currentHistory[HistoryEnumInd]);
+            }
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (CurrentFavourites.ContainsValue(label_box.Text))
+            {
+                CurrentFavourites.Remove(label_box.Text);
+            }
+            else if (CurrentFavourites.ContainsValue(url_box.Text))
+            {
+                var item = CurrentFavourites.First(kvp => kvp.Value == url_box.Text);
+                CurrentFavourites.Remove(item.Key);
+            }
+        }
+
+        private void DynamicButtonSearch(object sender, EventArgs e)
+        {
+            search(((ToolStripMenuItem)sender).Name);
+        }
+
+        private void editNameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var item = CurrentFavourites.First(kvp => kvp.Value == url_box.Text);
+            CurrentFavourites.Remove(item.Key);
+            CurrentFavourites.Add(label_box.Text, url_box.Text);
+        }
+
+        private void editUrlToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CurrentFavourites.Remove(label_box.Text);
+            CurrentFavourites.Add(label_box.Text, url_box.Text);
+        }
+
+        private void Favourites_ButtonClick(object sender, EventArgs e)
+        {
+            if (CurrentFavourites.Count != 0)
+            {
+                ToolStripItem[] newArray = FavButtonCreator(CurrentFavourites).ToArray();
+
+                Favourites.DropDownItems.Clear();
+
+                Favourites.DropDownItems.AddRange(newArray);
+            }
+            ToolStrip.ResumeLayout(false);
+            ToolStrip.PerformLayout();
+        }
+
+        private void Forward_Click(object sender, EventArgs e)
+        {
+            if (HistoryEnumInd < _currentHistory.Count - 1)
+            {
+                // Move index
+                HistoryEnumInd++;
+                //Display next
+                search(_currentHistory[HistoryEnumInd]);
+            }
+        }
+
+        private void History_ButtonClick(object sender, EventArgs e)
+        {
+            if (_currentHistory.Count != 0)
+            {
+                ToolStripItem[] newArray = HistButtonCreator(_currentHistory).ToArray();
+
+                History.DropDownItems.Clear();
+                History.DropDownItems.AddRange(newArray);
+            }
+            ToolStrip.ResumeLayout(false);
+            ToolStrip.PerformLayout();
+        }
+
+        private void Home_Click(object sender, EventArgs e)
+        {
+            List<String> currentHome =
+                SaveSystem.ReadFromJsonFile<List<String>>(Path + "home.txt");
+            if (currentHome[0] != null)
+            {
+                search(currentHome[0]);
+            }
+            else
+            {
+                Display.Text = @"Home is not set.";
+            }
+        }
+
+        private void Refresh_Click_1(object sender, EventArgs e)
+        {
+            search(Search_box.Text);
         }
 
         private void Search_button_Click(object sender, EventArgs f)
         {
-            // Add url to history 
+            // Add url to history
             HistoryList.Add(Search_box.Text);
 
             // set new index
             HistoryEnumInd = HistoryList.Count - 1;
 
             // Serialiase new History list
-            SaveSystem.WriteToJsonFile<List<string>>("C:/Users/youss/source/repos/CW1_GUI/History.txt", HistoryList);
-
-
+            SaveSystem.WriteToJsonFile(Path + "History.txt", HistoryList);
 
             // Assign the response object of 'HttpWebRequest' to a 'HttpWebResponse' variable.
             try
             {
                 // Creates an HttpWebRequest for the specified URL.
-                HttpWebRequest myHttpWebRequest = (HttpWebRequest) WebRequest.Create(Search_box.Text);
+                HttpWebRequest myHttpWebRequest = (HttpWebRequest)WebRequest.Create(Search_box.Text);
                 // Sends the HttpWebRequest and waits for a response.
-                HttpWebResponse myHttpWebResponse = (HttpWebResponse) myHttpWebRequest.GetResponse();
+                HttpWebResponse myHttpWebResponse = (HttpWebResponse)myHttpWebRequest.GetResponse();
                 if (myHttpWebResponse.StatusCode == HttpStatusCode.OK)
-                    Console.WriteLine("\r\nResponse Status Code is OK and StatusDescription is: {0}",
+                    Console.WriteLine(@"
+Response Status Code is OK and StatusDescription is: {0}",
                         myHttpWebResponse.StatusDescription);
                 // Display the contents of the page to the console.
                 Stream streamResponse = myHttpWebResponse.GetResponseStream();
 
                 // Get stream object
-                StreamReader streamRead = new StreamReader(streamResponse);
+                StreamReader streamRead = new StreamReader(streamResponse ?? throw new InvalidOperationException());
 
                 // Find title in html document
                 String source = streamRead.ReadToEnd();
@@ -162,28 +354,8 @@ namespace CW1_GUI
                 Display.Text = e.Message;
             }
 
-            CurrentHistory =
-                SaveSystem.ReadFromJsonFile<List<String>>("C:/Users/youss/source/repos/CW1_GUI/History.txt");
-        }
-
-        private void Refresh_Click_1(object sender, EventArgs e)
-        {
-            search(Search_box.Text);
-
-        }
-
-        private void Home_Click(object sender, EventArgs e)
-        {
-            List<String> current_home =
-                SaveSystem.ReadFromJsonFile<List<String>>("C:/Users/youss/source/repos/CW1_GUI/home.txt");
-            if (current_home[0] != null)
-            {
-                search(current_home[0]);
-            }
-            else
-            {
-                Display.Text = @"Home is not set.";
-            }
+            _currentHistory =
+                SaveSystem.ReadFromJsonFile<List<string>>(Path + "History.txt");
         }
 
         private void Set_home_Click(object sender, EventArgs e)
@@ -191,57 +363,46 @@ namespace CW1_GUI
             home = Search_box.Text;
             List<String> currentHome = new List<string>();
             currentHome.Add(home);
-            SaveSystem.WriteToJsonFile("C:/Users/youss/source/repos/CW1_GUI/home.txt", currentHome);
+            SaveSystem.WriteToJsonFile(Path + "home.txt", currentHome);
         }
 
-
-        private void Favourites_ButtonClick(object sender, EventArgs e)
+        public static class SaveSystem
         {
-
-        }
-
-        public ToolStripItem[] HistButtonCreator(List<string> urls)
-        {
-            foreach(string url in urls)
+            public static T ReadFromJsonFile<T>(string filePath) where T : new()
             {
-                newitem.Font = new System.Drawing.Font("Segoe UI", 9F);
-                newitem.Name = url;
-                newitem.Size = new System.Drawing.Size(100, 23);
-                histButtons.Append(newitem);
+                TextReader reader = null;
+                try
+                {
+                    reader = new StreamReader(filePath);
+                    var fileContents = reader.ReadToEnd();
+                    return JsonConvert.DeserializeObject<T>(fileContents);
+                }
+                catch (FileNotFoundException ex)
+                {
+                    throw new ArgumentException("file not found", ex);
+                }
+                finally
+                {
+                    if (reader != null)
+                        reader.Close();
+                }
             }
 
-            return histButtons;
-        }
-
-        
-    
-
-    private void History_ButtonClick(object sender, EventArgs e)
-        {
-
-        }
-        
-
-        private void Back_Click(object sender, EventArgs e)
-        {
-            if (HistoryEnumInd > 0)
+            public static void WriteToJsonFile<T>(string filePath, T objectToWrite, bool append = false) where T : new()
             {
-                // Move index
-                HistoryEnumInd--;
-                // Display previous
-                search(CurrentHistory[HistoryEnumInd]);
-            }
-        }
-
-        private void Forward_Click(object sender, EventArgs e)
-        {
-            if (HistoryEnumInd < CurrentHistory.Count - 1)
-            {
-                // Move index
-                HistoryEnumInd++;
-                //Display next
-                search(CurrentHistory[HistoryEnumInd]);
+                TextWriter writer = null;
+                try
+                {
+                    var contentsToWriteToFile = JsonConvert.SerializeObject(objectToWrite);
+                    writer = new StreamWriter(filePath, append);
+                    writer.Write(contentsToWriteToFile);
+                }
+                finally
+                {
+                    if (writer != null)
+                        writer.Close();
+                }
             }
         }
     }
-    }
+}
