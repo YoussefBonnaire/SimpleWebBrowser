@@ -43,12 +43,12 @@ namespace CW1_GUI
             this.Search_button = new System.Windows.Forms.ToolStripButton();
             this.Refresh = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.History = new System.Windows.Forms.ToolStripSplitButton();
             this.Favourites = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.gfdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripTextBox1 = new System.Windows.Forms.ToolStripTextBox();
-            this.History = new System.Windows.Forms.ToolStripSplitButton();
             this.ToolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -109,8 +109,8 @@ namespace CW1_GUI
             this.Search_button,
             this.Refresh,
             this.toolStripSeparator2,
-            this.Favourites,
-            this.History});
+            this.History,
+            this.Favourites});
             this.ToolStrip.Location = new System.Drawing.Point(0, 0);
             this.ToolStrip.Name = "ToolStrip";
             this.ToolStrip.Size = new System.Drawing.Size(800, 25);
@@ -173,6 +173,17 @@ namespace CW1_GUI
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
+            // History
+            // 
+            this.History.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.History.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.History.Image = ((System.Drawing.Image)(resources.GetObject("History.Image")));
+            this.History.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.History.Name = "History";
+            this.History.Size = new System.Drawing.Size(61, 22);
+            this.History.Text = "History";
+            this.History.ButtonClick += new System.EventHandler(this.History_ButtonClick);
+            // 
             // Favourites
             // 
             this.Favourites.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -205,24 +216,12 @@ namespace CW1_GUI
             this.gfdToolStripMenuItem.Name = "gfdToolStripMenuItem";
             this.gfdToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.gfdToolStripMenuItem.Text = "gfd";
-            this.gfdToolStripMenuItem.Click += new System.EventHandler(this.gfdToolStripMenuItem_Click);
             // 
             // toolStripTextBox1
             // 
             this.toolStripTextBox1.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.toolStripTextBox1.Name = "toolStripTextBox1";
             this.toolStripTextBox1.Size = new System.Drawing.Size(100, 23);
-            // 
-            // History
-            // 
-            this.History.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.History.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.History.Image = ((System.Drawing.Image)(resources.GetObject("History.Image")));
-            this.History.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.History.Name = "History";
-            this.History.Size = new System.Drawing.Size(61, 22);
-            this.History.Text = "History";
-            this.History.ButtonClick += new System.EventHandler(this.History_ButtonClick);
             // 
             // Form1
             // 
