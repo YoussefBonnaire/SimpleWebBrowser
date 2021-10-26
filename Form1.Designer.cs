@@ -120,7 +120,7 @@ namespace CW1_GUI
             this.Fav_Modifier});
             this.ToolStrip.Location = new System.Drawing.Point(0, 0);
             this.ToolStrip.Name = "ToolStrip";
-            this.ToolStrip.Size = new System.Drawing.Size(812, 25);
+            this.ToolStrip.Size = new System.Drawing.Size(796, 25);
             this.ToolStrip.TabIndex = 11;
             this.ToolStrip.Text = "toolStrip1";
             // 
@@ -214,7 +214,7 @@ namespace CW1_GUI
             this.Fav_Modifier.Image = ((System.Drawing.Image)(resources.GetObject("Fav_Modifier.Image")));
             this.Fav_Modifier.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Fav_Modifier.Name = "Fav_Modifier";
-            this.Fav_Modifier.Size = new System.Drawing.Size(89, 22);
+            this.Fav_Modifier.Size = new System.Drawing.Size(89, 19);
             this.Fav_Modifier.Text = "Fav Modifier";
             // 
             // label_box
@@ -271,7 +271,7 @@ namespace CW1_GUI
             // 
             // bulk_download
             // 
-            this.bulk_download.Location = new System.Drawing.Point(665, 35);
+            this.bulk_download.Location = new System.Drawing.Point(665, 31);
             this.bulk_download.Name = "bulk_download";
             this.bulk_download.Size = new System.Drawing.Size(97, 22);
             this.bulk_download.TabIndex = 12;
@@ -281,7 +281,7 @@ namespace CW1_GUI
             // 
             // bulk_box
             // 
-            this.bulk_box.Location = new System.Drawing.Point(553, 36);
+            this.bulk_box.Location = new System.Drawing.Point(547, 32);
             this.bulk_box.Name = "bulk_box";
             this.bulk_box.Size = new System.Drawing.Size(112, 20);
             this.bulk_box.TabIndex = 13;
@@ -290,7 +290,7 @@ namespace CW1_GUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(812, 448);
+            this.ClientSize = new System.Drawing.Size(796, 456);
             this.Controls.Add(this.bulk_box);
             this.Controls.Add(this.bulk_download);
             this.Controls.Add(this.ToolStrip);

@@ -11,144 +11,60 @@ namespace CW1_GUI
 {
     public partial class Form1 : Form
     {
-        public int HistoryEnumInd;
+        //Variables
 
-        // History variables
-        public List<String> HistoryList = new List<string>();
+        private int HistoryEnumInd;
 
-        public string Path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        private List<String> HistoryList = new List<string>();
+
+        private string Path = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
         private Dictionary<string, string> CurrentFavourites = new Dictionary<string, string>();
+        
+        private string BulkFile { get; set; }
 
-        private List<String> _currentHistory = new List<string>();
+        private string home { get; set; }
 
         public Form1()
         {
             InitializeComponent();
 
-            HistoryInitialiaser();
+            HistoryInitialiser();
             HomeInitialiser();
-        }
-
-        // Favourites variable
-        public string BulkFile { get; private set; }
-
-        public string home { get; set; }
-
-        public void bulk_download_Click(object sender, EventArgs e)
-        {
-            List<string> downloadText = new List<string>();
-            List<string> urlsList = new List<string>();
-
-            if (bulk_box.Text == "")
-            {
-                BulkFile = "bulk.txt";
-            }
-            else
-            {
-                BulkFile = bulk_box.Text;
-            }
-
             try
             {
-                using (StreamReader r = new StreamReader(BulkFile))
-                {
-                    string line;
-                    while ((line = r.ReadLine()) != null)
-                    {
-                        urlsList.Add(line);
-                    }
-                }
+                CurrentFavourites =
+                                Serialiser.ReadFromJsonFile<Dictionary<string, string>>(Path + "Favourites.txt");
+                FavouritesInitialiser();
             }
-            catch (FileNotFoundException ex)
+            catch (Exception e)
             {
-                throw new ArgumentException("file not found", ex);
-            }
-
-            foreach (string url in urlsList)
-            {
-                try
-                {
-                    // Creates an HttpWebRequest for the specified URL.
-                    HttpWebRequest myHttpWebRequest = (HttpWebRequest)WebRequest.Create(url);
-                    // Sends the HttpWebRequest and waits for a response.
-                    HttpWebResponse myHttpWebResponse = (HttpWebResponse)myHttpWebRequest.GetResponse();
-
-                    downloadText.Add(myHttpWebResponse.StatusCode.ToString() + " " + myHttpWebResponse.ContentLength +
-                                      " " + url);
-                }
-                catch (Exception ex)
-                {
-                    downloadText.Add(ex.Message + " 0" + " " + url);
-                }
-            }
-
-            Display.Text = downloadText[0];
-            foreach (string urlInfo in downloadText)
-            {
-                if (urlInfo == downloadText[0])
-                {
-                    Display.Text = urlInfo;
-                }
-                else
-                {
-                    Display.Text += Environment.NewLine + urlInfo;
-                }
+                Console.WriteLine("Favourites not set");
             }
         }
 
-        public ToolStripItem[] FavButtonCreator(Dictionary<string, string> urls)
-        {
-            ToolStripItem[] nItems = new ToolStripItem[urls.Count];
-            int i = 0;
-            foreach (KeyValuePair<string, string> url in urls)
-            {
-                nItems[i] = new ToolStripMenuItem();
-                nItems[i].Font = new System.Drawing.Font("Segoe UI", 9F);
-                nItems[i].Name = url.Value;
-                nItems[i].Size = new System.Drawing.Size(100, 23);
-                nItems[i].Visible = true;
-                nItems[i].Text = url.Key;
-                nItems[i].Click += DynamicButtonSearch;
-                i++;
-            }
-            return nItems;
-        }
+        // Created methods
 
-        public ToolStripItem[] HistButtonCreator(List<string> urls)
-        {
-            ToolStripItem[] nItems = new ToolStripItem[urls.Count];
+            // Initialisers
 
-            for (int i = 0; i < urls.Count; i++)
-            {
-                nItems[i] = new ToolStripMenuItem();
-                nItems[i].Font = new System.Drawing.Font("Segoe UI", 9F);
-                nItems[i].Name = urls[i];
-                nItems[i].Size = new System.Drawing.Size(100, 23);
-                nItems[i].Visible = true;
-                nItems[i].Text = urls[i];
-                nItems[i].Click += DynamicButtonSearch;
-            }
-            return nItems;
-        }
-
-        public void HistoryInitialiaser()
+        private void HistoryInitialiser()
         {
-            _currentHistory = SaveSystem.ReadFromJsonFile<List<string>>(Path + "History.txt");
-            ToolStripItem[] newArray = HistButtonCreator(_currentHistory).ToArray();
+            HistoryList = Serialiser.ReadFromJsonFile<List<string>>(Path + "History.txt");
+            ToolStripItem[] newArray = HistButtonCreator(HistoryList).ToArray();
             History.DropDownItems.Clear();
             History.DropDownItems.AddRange(newArray);
             ToolStrip.ResumeLayout(false);
             ToolStrip.PerformLayout();
         }
 
-        public void HomeInitialiser()
+        private void HomeInitialiser()
         {
             List<String> currentHome =
-                SaveSystem.ReadFromJsonFile<List<String>>(Path + "home.txt");
+                Serialiser.ReadFromJsonFile<List<String>>(Path + "home.txt");
             if (currentHome[0].Length != 0)
             {
                 search(currentHome[0]);
+                this.Search_box.Text = currentHome[0];
             }
             else
             {
@@ -156,7 +72,19 @@ namespace CW1_GUI
             }
         }
 
-        public void search(string source)
+        private void FavouritesInitialiser()
+        {
+            CurrentFavourites = Serialiser.ReadFromJsonFile<Dictionary<string, string>>(Path + "Favourites.txt");
+            ToolStripItem[] newArray = FavButtonCreator(CurrentFavourites).ToArray();
+            Favourites.DropDownItems.Clear();
+            Favourites.DropDownItems.AddRange(newArray);
+            ToolStrip.ResumeLayout(false);
+            ToolStrip.PerformLayout();
+        }
+
+            // Search
+
+        private void search(string source)
         {
             try
             {
@@ -193,111 +121,65 @@ Response Status Code is OK and StatusDescription is: {0}",
             }
             catch (Exception e)
             {
-                Display.Text = e.Message;
+                if (e.Message.Contains("400")) { Display.Text = "– 400 Bad Request"; }
+                else if (e.Message.Contains("403")) { Display.Text = "– 403 Forbidden"; }
+                else if (e.Message.Contains("404"))
+                {
+                    Display.Text = "– 404 Not Found";
+                }
+                else
+                {
+                    Display.Text = e.Message;
+                }
             }
         }
 
-        private void addtoolStripMenuItem_Click(object sender, EventArgs e)
+            // Button creators
+
+        private ToolStripItem[] FavButtonCreator(Dictionary<string, string> urls)
         {
-            if (!CurrentFavourites.ContainsValue(url_box.Text))
+            ToolStripItem[] nItems = new ToolStripItem[urls.Count];
+            int i = 0;
+            foreach (KeyValuePair<string, string> url in urls)
             {
-                CurrentFavourites.Add(label_box.Text, url_box.Text);
+                nItems[i] = new ToolStripMenuItem();
+                nItems[i].Font = new System.Drawing.Font("Segoe UI", 9F);
+                nItems[i].Name = url.Value;
+                nItems[i].Size = new System.Drawing.Size(100, 23);
+                nItems[i].Visible = true;
+                nItems[i].Text = url.Key;
+                nItems[i].Click += DynamicButtonSearch;
+                i++;
             }
+            return nItems;
         }
 
-        private void Back_Click(object sender, EventArgs e)
+        private ToolStripItem[] HistButtonCreator(List<string> urls)
         {
-            if (HistoryEnumInd > 0)
-            {
-                // Move index
-                HistoryEnumInd--;
-                // Display previous
-                search(_currentHistory[HistoryEnumInd]);
-            }
-        }
+            ToolStripItem[] nItems = new ToolStripItem[urls.Count];
 
-        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (CurrentFavourites.ContainsValue(label_box.Text))
+            for (int i = 0; i < urls.Count; i++)
             {
-                CurrentFavourites.Remove(label_box.Text);
+                nItems[i] = new ToolStripMenuItem();
+                nItems[i].Font = new System.Drawing.Font("Segoe UI", 9F);
+                nItems[i].Name = urls[i];
+                nItems[i].Size = new System.Drawing.Size(100, 23);
+                nItems[i].Visible = true;
+                nItems[i].Text = urls[i];
+                nItems[i].Click += DynamicButtonSearch;
             }
-            else if (CurrentFavourites.ContainsValue(url_box.Text))
-            {
-                var item = CurrentFavourites.First(kvp => kvp.Value == url_box.Text);
-                CurrentFavourites.Remove(item.Key);
-            }
+            return nItems;
         }
 
         private void DynamicButtonSearch(object sender, EventArgs e)
         {
             search(((ToolStripMenuItem)sender).Name);
+            this.Search_box.Text = ((ToolStripMenuItem)sender).Name;
         }
 
-        private void editNameToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var item = CurrentFavourites.First(kvp => kvp.Value == url_box.Text);
-            CurrentFavourites.Remove(item.Key);
-            CurrentFavourites.Add(label_box.Text, url_box.Text);
-        }
+        // Button clicking definitions
 
-        private void editUrlToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            CurrentFavourites.Remove(label_box.Text);
-            CurrentFavourites.Add(label_box.Text, url_box.Text);
-        }
-
-        private void Favourites_ButtonClick(object sender, EventArgs e)
-        {
-            if (CurrentFavourites.Count != 0)
-            {
-                ToolStripItem[] newArray = FavButtonCreator(CurrentFavourites).ToArray();
-
-                Favourites.DropDownItems.Clear();
-
-                Favourites.DropDownItems.AddRange(newArray);
-            }
-            ToolStrip.ResumeLayout(false);
-            ToolStrip.PerformLayout();
-        }
-
-        private void Forward_Click(object sender, EventArgs e)
-        {
-            if (HistoryEnumInd < _currentHistory.Count - 1)
-            {
-                // Move index
-                HistoryEnumInd++;
-                //Display next
-                search(_currentHistory[HistoryEnumInd]);
-            }
-        }
-
-        private void History_ButtonClick(object sender, EventArgs e)
-        {
-            if (_currentHistory.Count != 0)
-            {
-                ToolStripItem[] newArray = HistButtonCreator(_currentHistory).ToArray();
-
-                History.DropDownItems.Clear();
-                History.DropDownItems.AddRange(newArray);
-            }
-            ToolStrip.ResumeLayout(false);
-            ToolStrip.PerformLayout();
-        }
-
-        private void Home_Click(object sender, EventArgs e)
-        {
-            List<String> currentHome =
-                SaveSystem.ReadFromJsonFile<List<String>>(Path + "home.txt");
-            if (currentHome[0] != null)
-            {
-                search(currentHome[0]);
-            }
-            else
-            {
-                Display.Text = @"Home is not set.";
-            }
-        }
+            // Refresh and Search buttons
 
         private void Refresh_Click_1(object sender, EventArgs e)
         {
@@ -313,7 +195,7 @@ Response Status Code is OK and StatusDescription is: {0}",
             HistoryEnumInd = HistoryList.Count - 1;
 
             // Serialiase new History list
-            SaveSystem.WriteToJsonFile(Path + "History.txt", HistoryList);
+            Serialiser.WriteToJsonFile(Path + "History.txt", HistoryList);
 
             // Assign the response object of 'HttpWebRequest' to a 'HttpWebResponse' variable.
             try
@@ -354,8 +236,52 @@ Response Status Code is OK and StatusDescription is: {0}",
                 Display.Text = e.Message;
             }
 
-            _currentHistory =
-                SaveSystem.ReadFromJsonFile<List<string>>(Path + "History.txt");
+            HistoryList =
+                Serialiser.ReadFromJsonFile<List<string>>(Path + "History.txt");
+        }
+
+            // Back and forwards buttons
+
+        private void Back_Click(object sender, EventArgs e)
+        {
+            if (HistoryEnumInd > 0)
+            {
+                // Move index
+                HistoryEnumInd--;
+                // Display previous
+                search(HistoryList[HistoryEnumInd]);
+                this.Search_box.Text = HistoryList[HistoryEnumInd];
+            }
+        }
+
+        private void Forward_Click(object sender, EventArgs e)
+        {
+            if (HistoryEnumInd < HistoryList.Count - 1)
+            {
+                // Move index
+                HistoryEnumInd++;
+                //Display next
+                search(HistoryList[HistoryEnumInd]);
+                this.Search_box.Text = HistoryList[HistoryEnumInd];
+            }
+        }
+
+
+            // Set and go home buttons
+
+        private void Home_Click(object sender, EventArgs e)
+        {
+            List<String> currentHome =
+                Serialiser.ReadFromJsonFile<List<String>>(Path + "home.txt");
+            if (currentHome[0] != null)
+            {
+                search(currentHome[0]);
+                this.Search_box.Text = currentHome[0];
+            }
+            else
+            {
+                Display.Text = @"Home is not set.";
+            }
         }
 
         private void Set_home_Click(object sender, EventArgs e)
@@ -363,10 +289,157 @@ Response Status Code is OK and StatusDescription is: {0}",
             home = Search_box.Text;
             List<String> currentHome = new List<string>();
             currentHome.Add(home);
-            SaveSystem.WriteToJsonFile(Path + "home.txt", currentHome);
+            Serialiser.WriteToJsonFile(Path + "home.txt", currentHome);
         }
 
-        public static class SaveSystem
+            // Favourite and History buttons
+
+        private void Favourites_ButtonClick(object sender, EventArgs e)
+        {
+            if (CurrentFavourites.Count != 0)
+            {
+                Serialiser.WriteToJsonFile(Path + "Favourites.txt", CurrentFavourites);
+                ToolStripItem[] newArray = FavButtonCreator(CurrentFavourites).ToArray();
+
+                Favourites.DropDownItems.Clear();
+
+                Favourites.DropDownItems.AddRange(newArray);
+            }
+            ToolStrip.ResumeLayout(false);
+            ToolStrip.PerformLayout();
+        }
+
+        private void History_ButtonClick(object sender, EventArgs e)
+        {
+            if (HistoryList.Count != 0)
+            {
+                ToolStripItem[] newArray = HistButtonCreator(HistoryList).ToArray();
+
+                History.DropDownItems.Clear();
+                History.DropDownItems.AddRange(newArray);
+            }
+            ToolStrip.ResumeLayout(false);
+            ToolStrip.PerformLayout();
+        }
+
+            // Favourites modify
+
+        private void addtoolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!CurrentFavourites.ContainsValue(url_box.Text))
+            {
+                CurrentFavourites.Add(label_box.Text, url_box.Text);
+                Serialiser.WriteToJsonFile(Path + "Favourites.txt", CurrentFavourites);
+            }
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (CurrentFavourites.ContainsValue(label_box.Text))
+            {
+                CurrentFavourites.Remove(label_box.Text);
+
+                Serialiser.WriteToJsonFile(Path + "Favourites.txt", CurrentFavourites);
+            }
+            else if (CurrentFavourites.ContainsValue(url_box.Text))
+            {
+                var item = CurrentFavourites.First(kvp => kvp.Value == url_box.Text);
+                CurrentFavourites.Remove(item.Key);
+
+                Serialiser.WriteToJsonFile(Path + "Favourites.txt", CurrentFavourites);
+            }
+        }
+
+        private void editNameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (CurrentFavourites.ContainsValue(url_box.Text))
+            {
+                var item = CurrentFavourites.First(kvp => kvp.Value == url_box.Text);
+                CurrentFavourites.Remove(item.Key);
+                CurrentFavourites.Add(label_box.Text, url_box.Text);
+
+                Serialiser.WriteToJsonFile(Path + "Favourites.txt", CurrentFavourites);
+            }
+        }
+
+        private void editUrlToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (CurrentFavourites.ContainsValue(label_box.Text))
+            {
+                CurrentFavourites.Remove(label_box.Text);
+                CurrentFavourites.Add(label_box.Text, url_box.Text);
+
+                Serialiser.WriteToJsonFile(Path + "Favourites.txt", CurrentFavourites);
+            }
+        }
+
+        // Bulk download button
+
+        private void bulk_download_Click(object sender, EventArgs e)
+        {
+            List<string> downloadText = new List<string>();
+            List<string> urlsList = new List<string>();
+
+            if (bulk_box.Text == "")
+            {
+                BulkFile = "bulk.txt";
+            }
+            else
+            {
+                BulkFile = bulk_box.Text;
+            }
+
+            try
+            {
+                using (StreamReader r = new StreamReader(BulkFile))
+                {
+                    string line;
+                    while ((line = r.ReadLine()) != null)
+                    {
+                        urlsList.Add(line);
+                    }
+                }
+                foreach (string url in urlsList)
+                {
+                    try
+                    {
+                        // Creates an HttpWebRequest for the specified URL.
+                        HttpWebRequest myHttpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+                        // Sends the HttpWebRequest and waits for a response.
+                        HttpWebResponse myHttpWebResponse = (HttpWebResponse)myHttpWebRequest.GetResponse();
+
+                        downloadText.Add(myHttpWebResponse.StatusCode.ToString() + " " + myHttpWebResponse.ContentLength +
+                                         " " + url);
+                    }
+                    catch (Exception ex)
+                    {
+                        downloadText.Add(ex.Message + " 0" + " " + url);
+                    }
+                }
+
+                Display.Text = downloadText[0];
+                foreach (string urlInfo in downloadText)
+                {
+                    if (urlInfo == downloadText[0])
+                    {
+                        Display.Text = urlInfo;
+                    }
+                    else
+                    {
+                        Display.Text += Environment.NewLine + urlInfo;
+                    }
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                Display.Text = ex.Message;
+            }
+
+            
+        }
+
+        // Class created
+        private static class Serialiser
         {
             public static T ReadFromJsonFile<T>(string filePath) where T : new()
             {
